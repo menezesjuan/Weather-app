@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Runner - Weather App</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0d0f1d;
+      color: #f1f2f6;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+    .summary {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: #191c32;
+      border-radius: 8px;
+    }
+    .stat {
+      font-size: 1rem;
+    }
+    .stat strong {
+      font-size: 1.25rem;
+    }
+    .pass { color: #4ade80; }
+    .fail { color: #f87171; }
+    .suite {
+      background: #191c32;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    .suite-header {
+      padding: 0.75rem 1rem;
+      background: #232743;
+      font-weight: 600;
+    }
+    .test-item {
+      padding: 0.6rem 1rem;
+      border-top: 1px solid #2d3255;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+    }
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .badge-pass { background: #14532d; color: #86efac; }
+    .badge-fail { background: #7f1d1d; color: #fca5a5; }
+    .error-log {
+      color: #fca5a5;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 0.5rem 0 0.5rem 2rem;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Weather App - Test Runner</h1>
+  <div class="summary" id="summary">
+    <div class="stat">Total: <strong id="total-count">0</strong></div>
+    <div class="stat pass">Passaram: <strong id="pass-count">0</strong></div>
+    <div class="stat fail">Falharam: <strong id="fail-count">0</strong></div>
+  </div>
+  <div id="results"></div>
+
+  <script type="module">
+    const resultsContainer = document.getElementById('results');
+    let total = 0;
+    let passed = 0;
+    let failed = 0;
+
+    function updateSummary() {
+      document.getElementById('total-count').textContent = total;
+      document.getElementById('pass-count').textContent = passed;
+      document.getElementById('fail-count').textContent = failed;
+    }
+
+    window.describe = async function(suiteName, fn) {
+      const suiteEl = document.createElement('div');
+      suiteEl.className = 'suite';
+      const header = document.createElement('div');
+      header.className = 'suite-header';
+      header.textContent = suiteName;
+      suiteEl.appendChild(header);
+      resultsContainer.appendChild(suiteEl);
+
+      const runTest = async (testName, testFn) => {
+        total++;
+        const item = document.createElement('div');
+        item.className = 'test-item';
+        try {
+          await testFn();
+          passed++;
+          item.innerHTML = `<span class="badge badge-pass">PASS</span> <span>${testName}</span>`;
+        } catch (err) {
+          failed++;
+          item.innerHTML = `<span class="badge badge-fail">FAIL</span> <span>${testName}</span><div class="error-log">${err.stack || err.message}</div>`;
+        }
+        suiteEl.appendChild(item);
+        updateSummary();
+      };
+
+      const it = (name, testFn) => runTest(name, testFn);
+      await fn(it);
+    };
+
+    window.assert = {
+      strictEqual(actual, expected, msg) {
+        if (actual !== expected) {
+          throw new Error(msg || `Esperado: ${JSON.stringify(expected)}, recebido: ${JSON.stringify(actual)}`);
+        }
+      },
+      deepStrictEqual(actual, expected, msg) {
+        const a = JSON.stringify(actual);
+        const b = JSON.stringify(expected);
+        if (a !== b) {
+          throw new Error(msg || `Esperado: ${b}, recebido: ${a}`);
+        }
+      },
+      ok(value, msg) {
+        if (!value) {
+          throw new Error(msg || `Esperado valor verdadeiro, recebido: ${value}`);
+        }
+      }
+    };
+
+    // Teste de integridade do runner
+    await describe('Ambiente no Navegador', (it) => {
+      it('deve carregar e executar testes no navegador', () => {
+        assert.ok(true);
+      });
+    });
+  </script>
+</body>
+</html>
