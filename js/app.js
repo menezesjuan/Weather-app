@@ -6,6 +6,7 @@ import { store } from './state.js';
 import { setupSearchController } from './ui-search.js';
 import { renderCurrentWeather } from './ui-weather.js';
 import { renderDailyForecast, renderHourlyForecast, setupHourlyDaySelector } from './ui-forecast.js';
+import { setupUnitsDropdown } from './ui-units.js';
 import { getWeatherData } from './api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,6 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const weatherContent = document.getElementById('weather-content');
   const loadingState = document.getElementById('loading-state');
   const errorState = document.getElementById('error-state');
+
+  // Elementos do Menu de Unidades
+  const unitsButton = document.getElementById('units-button');
+  const unitsMenu = document.getElementById('units-menu');
+  const systemToggleBtn = document.getElementById('system-toggle-btn');
+  const unitOptions = document.querySelectorAll('.unit-option');
+
+  setupUnitsDropdown({
+    buttonEl: unitsButton,
+    menuEl: unitsMenu,
+    systemToggleBtn,
+    unitOptions,
+    store
+  });
 
   // Elementos do Clima Atual
   const weatherElements = {
@@ -41,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Inicializar seletor de dias da previsão horária
   setupHourlyDaySelector(hourlyElements.dayButton, hourlyElements.dayMenu);
 
-  // Reagir a mudanças na store
+  // Reagir a mudanças na store (dados climáticos ou troca de unidades)
   store.subscribe((state) => {
     if (state.weatherData) {
       renderCurrentWeather(weatherElements, state);
