@@ -1,5 +1,6 @@
 /**
  * Controlador da barra de pesquisa e do dropdown de autocomplete com feedback de status.
+ * Em conformidade com o padrão WAI-ARIA 1.2 Combobox.
  */
 
 import { searchCities } from './api.js';
@@ -27,6 +28,11 @@ export function setupSearchController({
       suggestionsEl.classList.add('hidden');
       inputEl.setAttribute('aria-expanded', 'false');
       highlightedIndex = -1;
+      if (inputEl.removeAttribute) {
+        inputEl.removeAttribute('aria-activedescendant');
+      } else {
+        inputEl.setAttribute('aria-activedescendant', '');
+      }
     }
   }
 
@@ -47,32 +53,34 @@ export function setupSearchController({
       return;
     }
 
-    const itemsHtml = results.map((city, idx) => {
+    // Limpar conteúdo anterior com segurança
+    if (typeof suggestionsEl.replaceChildren === 'function') {
+      suggestionsEl.replaceChildren();
+    } else {
+      suggestionsEl.innerHTML = '';
+    }
+
+    results.forEach((city, idx) => {
       const locationText = city.country ? `${city.name}, ${city.country}` : city.name;
-      return `
-        <button 
-          type="button" 
-          class="suggestion-item" 
-          data-index="${idx}" 
-          role="option" 
-          aria-selected="false"
-        >
-          <span>${locationText}</span>
-        </button>
-      `;
-    }).join('');
+      
+      const itemEl = document.createElement('div');
+      itemEl.className = 'suggestion-item';
+      itemEl.classList.add('suggestion-item');
+      itemEl.id = `suggestion-${idx}`;
+      itemEl.setAttribute('role', 'option');
+      itemEl.setAttribute('data-index', String(idx));
+      itemEl.setAttribute('aria-selected', 'false');
+      // Inserção segura via textContent para prevenir vulnerabilidades de XSS
+      itemEl.textContent = locationText;
 
-    suggestionsEl.innerHTML = itemsHtml;
-    setOpen(true);
-
-    // Event listeners para os botões da lista
-    const buttons = suggestionsEl.querySelectorAll('.suggestion-item');
-    buttons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const idx = parseInt(btn.getAttribute('data-index'), 10);
+      itemEl.addEventListener('click', () => {
         selectItem(idx);
       });
+
+      suggestionsEl.appendChild(itemEl);
     });
+
+    setOpen(true);
   }
 
   function selectItem(index) {
@@ -88,16 +96,31 @@ export function setupSearchController({
 
   function updateHighlight() {
     const items = suggestionsEl.querySelectorAll('.suggestion-item');
+    let activeId = '';
+
     items.forEach((item, idx) => {
       if (idx === highlightedIndex) {
         item.classList.add('focused');
         item.setAttribute('aria-selected', 'true');
-        item.scrollIntoView({ block: 'nearest' });
+        activeId = item.id;
+        if (typeof item.scrollIntoView === 'function') {
+          item.scrollIntoView({ block: 'nearest' });
+        }
       } else {
         item.classList.remove('focused');
         item.setAttribute('aria-selected', 'false');
       }
     });
+
+    if (activeId) {
+      inputEl.setAttribute('aria-activedescendant', activeId);
+    } else {
+      if (inputEl.removeAttribute) {
+        inputEl.removeAttribute('aria-activedescendant');
+      } else {
+        inputEl.setAttribute('aria-activedescendant', '');
+      }
+    }
   }
 
   async function handleSearchInput(query) {

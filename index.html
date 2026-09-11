@@ -83,6 +83,7 @@
             class="search-input" 
             placeholder="Search for a place..." 
             autocomplete="off" 
+            role="combobox"
             aria-autocomplete="list" 
             aria-controls="search-suggestions" 
             aria-expanded="false"
@@ -116,18 +117,18 @@
       </div>
 
       <!-- Weather Dashboard Area -->
-      <div id="weather-content" class="weather-content">
+      <div id="weather-content" class="weather-content hidden">
         <!-- Left Column -->
         <div class="weather-primary">
           <!-- Current Weather Hero Card -->
           <section id="current-weather" class="current-weather-card" aria-label="Current Weather">
             <div class="current-info">
-              <h2 id="current-location-name">Berlin, Germany</h2>
-              <p id="current-date-text" class="current-date">Tuesday, Aug 5, 2025</p>
+              <h2 id="current-location-name"></h2>
+              <p id="current-date-text" class="current-date"></p>
             </div>
             <div class="current-display">
-              <img id="current-weather-icon" src="./assets/images/icon-sunny.webp" alt="Sunny" class="current-weather-icon">
-              <span id="current-temp" class="current-temp">20°</span>
+              <img id="current-weather-icon" src="" alt="" class="current-weather-icon">
+              <span id="current-temp" class="current-temp"></span>
             </div>
           </section>
 
@@ -135,19 +136,19 @@
           <section id="weather-metrics" class="metrics-grid" aria-label="Current Weather Metrics">
             <div class="metric-card">
               <span class="metric-label">Feels Like</span>
-              <span id="metric-feels-like" class="metric-value">18°</span>
+              <span id="metric-feels-like" class="metric-value">-</span>
             </div>
             <div class="metric-card">
               <span class="metric-label">Humidity</span>
-              <span id="metric-humidity" class="metric-value">46%</span>
+              <span id="metric-humidity" class="metric-value">-</span>
             </div>
             <div class="metric-card">
               <span class="metric-label">Wind</span>
-              <span id="metric-wind" class="metric-value">14 km/h</span>
+              <span id="metric-wind" class="metric-value">-</span>
             </div>
             <div class="metric-card">
               <span class="metric-label">Precipitation</span>
-              <span id="metric-precipitation" class="metric-value">0 mm</span>
+              <span id="metric-precipitation" class="metric-value">-</span>
             </div>
           </section>
 
@@ -164,7 +165,7 @@
             <h2>Hourly forecast</h2>
             <div class="hourly-day-selector">
               <button id="hourly-day-button" class="hourly-day-button" aria-expanded="false" aria-haspopup="true" aria-controls="hourly-day-menu">
-                <span id="hourly-selected-day-label">Tuesday</span>
+                <span id="hourly-selected-day-label">-</span>
                 <img src="./assets/images/icon-dropdown.svg" alt="" aria-hidden="true">
               </button>
               <div id="hourly-day-menu" class="hourly-day-menu hidden" role="menu" aria-label="Select day of week"></div>

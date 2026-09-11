@@ -33,6 +33,8 @@ describe('Estrutura HTML e Acessibilidade Semântica', () => {
     assert.ok(html.includes('id="search-form"') || html.includes('class="search-form"'));
     assert.ok(html.includes('id="search-input"') || html.includes('class="search-input"'));
     assert.ok(html.includes('id="search-button"') || html.includes('class="search-button"'));
+    assert.ok(html.includes('role="combobox"'), 'search-input deve ter role="combobox"');
+    assert.ok(html.includes('aria-autocomplete="list"'), 'search-input deve ter aria-autocomplete="list"');
   });
 
   it('deve conter as seções da interface: clima atual, métricas, diária e horária', () => {
@@ -40,6 +42,9 @@ describe('Estrutura HTML e Acessibilidade Semântica', () => {
     assert.ok(html.includes('id="weather-metrics"'));
     assert.ok(html.includes('id="daily-forecast"'));
     assert.ok(html.includes('id="hourly-forecast"'));
+    assert.ok(html.includes('id="weather-content" class="weather-content hidden"'), 'weather-content deve iniciar com a classe hidden');
+    assert.ok(!html.includes('>Berlin, Germany<'), 'HTML não deve conter cidade de Berlim mockada no markup estático');
+    assert.ok(!html.includes('>20°<'), 'HTML não deve conter temperatura de 20° mockada no markup estático');
   });
 
   it('deve conter os containers para feedback visual (erro, carregamento e sem resultados)', () => {
@@ -57,5 +62,28 @@ describe('Validação da Folha de Estilos (style.css)', () => {
     assert.ok(css.includes('--neutral-800'));
     assert.ok(css.includes('--blue-500'));
     assert.ok(css.includes('--orange-500'));
+  });
+
+  it('deve implementar anel de foco de alto contraste conforme WCAG nos menus e componentes', () => {
+    const css = fs.readFileSync(cssPath, 'utf8');
+    assert.ok(
+      css.includes('outline: 2px solid var(--neutral-0)') || css.includes('box-shadow: 0 0 0'),
+      'Deve implementar técnica de anel de foco com contraste >= 3:1'
+    );
+    assert.ok(
+      css.includes('.units-menu') && css.includes(':focus-visible'),
+      'Deve ter regra de foco explícita para menus suspensos'
+    );
+  });
+
+  it('deve utilizar fontes no formato otimizado woff2 nas diretivas @font-face', () => {
+    const css = fs.readFileSync(cssPath, 'utf8');
+    assert.ok(css.includes("format('woff2')"), "Diretivas @font-face devem declarar format('woff2')");
+    assert.ok(css.includes('.woff2'), "Diretivas @font-face devem apontar para arquivos .woff2");
+    
+    const bricolagePath = path.join(__dirname, '..', 'assets', 'fonts', 'Bricolage_Grotesque', 'BricolageGrotesque-VariableFont.woff2');
+    const dmSansPath = path.join(__dirname, '..', 'assets', 'fonts', 'DM_Sans', 'DMSans-VariableFont.woff2');
+    assert.ok(fs.existsSync(bricolagePath), 'Arquivo woff2 do Bricolage Grotesque deve existir');
+    assert.ok(fs.existsSync(dmSansPath), 'Arquivo woff2 do DM Sans deve existir');
   });
 });

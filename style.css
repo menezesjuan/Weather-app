@@ -1,14 +1,24 @@
 @font-face {
   font-family: 'DM Sans';
-  src: url('./assets/fonts/DM_Sans/DMSans-VariableFont_opsz,wght.ttf') format('truetype');
+  src: url('./assets/fonts/DM_Sans/DMSans-VariableFont.woff2') format('woff2');
   font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('./assets/fonts/DM_Sans/DMSans-Italic-VariableFont.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: italic;
   font-display: swap;
 }
 
 @font-face {
   font-family: 'Bricolage Grotesque';
-  src: url('./assets/fonts/Bricolage_Grotesque/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf') format('truetype');
+  src: url('./assets/fonts/Bricolage_Grotesque/BricolageGrotesque-VariableFont.woff2') format('woff2');
   font-weight: 700;
+  font-style: normal;
   font-display: swap;
 }
 
@@ -55,13 +65,28 @@ body {
   overflow-x: hidden;
 }
 
-/* Accessibility Focus States */
+/* Accessibility Focus States (WCAG 2.1 AA Compliant - Contrast >= 3:1) */
 button:focus-visible,
 input:focus-visible,
 [role="button"]:focus-visible,
+[role="combobox"]:focus-visible,
+[role="option"]:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--blue-500);
+  outline: 2px solid var(--neutral-0);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--blue-500);
+}
+
+/* High-contrast focus indicators for Dropdown Menus and Option Items (WCAG 2.1 AA) */
+.units-menu button:focus-visible,
+.units-menu .unit-option:focus-visible,
+.hourly-day-menu button:focus-visible,
+.hourly-day-option:focus-visible,
+.suggestion-item:focus-visible,
+.suggestion-item.focused {
+  outline: 2px solid var(--neutral-0);
+  outline-offset: -2px;
+  box-shadow: 0 0 0 2px var(--blue-500);
 }
 
 /* Container */
