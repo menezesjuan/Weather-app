@@ -7,6 +7,7 @@ import { setupSearchController } from './ui-search.js';
 import { renderCurrentWeather } from './ui-weather.js';
 import { renderDailyForecast, renderHourlyForecast, setupHourlyDaySelector } from './ui-forecast.js';
 import { setupUnitsDropdown } from './ui-units.js';
+import { setupFeedbackViews } from './ui-feedback.js';
 import { getWeatherData } from './api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,6 +18,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const weatherContent = document.getElementById('weather-content');
   const loadingState = document.getElementById('loading-state');
   const errorState = document.getElementById('error-state');
+  const retryButton = document.getElementById('retry-button');
+
+  // Inicializar gerenciador de estados de feedback
+  const feedbackViews = setupFeedbackViews({
+    loadingEl: loadingState,
+    errorEl: errorState,
+    noResultsEl: noResultsState,
+    contentEl: weatherContent,
+    retryBtn: retryButton
+  }, () => {
+    // Ação do botão Retry
+    const currentLoc = store.getState().location;
+    if (currentLoc) {
+      loadWeatherForLocation(currentLoc);
+    }
+  });
 
   // Elementos do Menu de Unidades
   const unitsButton = document.getElementById('units-button');
@@ -77,10 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await loadWeatherForLocation(city);
     },
     onNoResults: () => {
-      weatherContent.classList.add('hidden');
-      errorState.classList.add('hidden');
-      loadingState.classList.add('hidden');
-      noResultsState.classList.remove('hidden');
+      feedbackViews.showNoResults();
     },
     onClearNoResults: () => {
       noResultsState.classList.add('hidden');
@@ -89,21 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadWeatherForLocation(location) {
     try {
-      loadingState.classList.remove('hidden');
-      weatherContent.classList.add('hidden');
-      errorState.classList.add('hidden');
-      noResultsState.classList.add('hidden');
+      feedbackViews.showLoading();
 
       const data = await getWeatherData(location.latitude, location.longitude, window.fetch, location.timezone);
       store.setWeatherData(data);
 
-      loadingState.classList.add('hidden');
-      weatherContent.classList.remove('hidden');
+      feedbackViews.showContent();
     } catch (err) {
       console.error('Falha ao obter clima:', err);
-      loadingState.classList.add('hidden');
-      weatherContent.classList.add('hidden');
-      errorState.classList.remove('hidden');
+      feedbackViews.showError();
     }
   }
 
