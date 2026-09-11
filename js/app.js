@@ -4,6 +4,7 @@
 
 import { store } from './state.js';
 import { setupSearchController } from './ui-search.js';
+import { renderCurrentWeather } from './ui-weather.js';
 import { getWeatherData } from './api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -14,6 +15,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const weatherContent = document.getElementById('weather-content');
   const loadingState = document.getElementById('loading-state');
   const errorState = document.getElementById('error-state');
+
+  // Elementos do Clima Atual
+  const weatherElements = {
+    locationName: document.getElementById('current-location-name'),
+    dateText: document.getElementById('current-date-text'),
+    icon: document.getElementById('current-weather-icon'),
+    temp: document.getElementById('current-temp'),
+    feelsLike: document.getElementById('metric-feels-like'),
+    humidity: document.getElementById('metric-humidity'),
+    wind: document.getElementById('metric-wind'),
+    precipitation: document.getElementById('metric-precipitation')
+  };
+
+  // Reagir a mudanças na store
+  store.subscribe((state) => {
+    if (state.weatherData) {
+      renderCurrentWeather(weatherElements, state);
+    }
+  });
 
   // Inicializar o controlador de busca
   setupSearchController({
