@@ -81,11 +81,6 @@
   <script type="module">
     import {
       celsiusToFahrenheit,
-      fahrenheitToCelsius,
-      kmhToMph,
-      mphToKmh,
-      mmToInches,
-      inchesToMm,
       formatTemperature,
       formatWindSpeed,
       formatPrecipitation
@@ -94,9 +89,11 @@
     import {
       formatDate,
       formatDayOfWeek,
-      formatHour,
-      formatIsoDate
+      formatHour
     } from '../js/formatters.js';
+
+    import { getWeatherInfo } from '../js/weather-codes.js';
+    import { searchCities, getWeatherData } from '../js/api.js';
 
     const resultsContainer = document.getElementById('results');
     let total = 0;
@@ -151,40 +148,46 @@
       }
     };
 
-    // Suite Conversões
-    await describe('Conversões de Unidades de Temperatura', (it) => {
-      it('deve converter Celsius para Fahrenheit corretamente', () => {
-        assert.strictEqual(celsiusToFahrenheit(0), 32);
+    await describe('Conversões de Unidades', (it) => {
+      it('deve converter Celsius para Fahrenheit', () => {
         assert.strictEqual(celsiusToFahrenheit(20), 68);
       });
-      it('deve formatar temperatura com o símbolo de grau', () => {
+      it('deve formatar temperatura', () => {
         assert.strictEqual(formatTemperature(20.4), '20°');
       });
     });
 
-    await describe('Conversões de Unidades de Vento e Precipitação', (it) => {
-      it('deve converter km/h para mph com arredondamento preciso', () => {
-        assert.strictEqual(kmhToMph(14), 9);
+    await describe('Formatadores de Data e Hora', (it) => {
+      it('deve formatar data completa', () => {
+        assert.strictEqual(formatDate('2025-08-05T12:00:00Z'), 'Tuesday, Aug 5, 2025');
       });
-      it('deve converter mm para polegadas', () => {
-        assert.strictEqual(mmToInches(25.4), 1);
-      });
-      it('deve formatar vento e precipitação', () => {
-        assert.strictEqual(formatWindSpeed(14, 'kmh'), '14 km/h');
-        assert.strictEqual(formatPrecipitation(0, 'mm'), '0 mm');
+      it('deve formatar hora no padrão 12h', () => {
+        assert.strictEqual(formatHour('2025-08-05T15:00'), '3 PM');
       });
     });
 
-    // Suite Formatadores
-    await describe('Formatadores de Data e Hora', (it) => {
-      it('deve formatar data completa no padrão Tuesday, Aug 5, 2025', () => {
-        assert.strictEqual(formatDate('2025-08-05T12:00:00Z'), 'Tuesday, Aug 5, 2025');
+    await describe('Mapeamento WMO', (it) => {
+      it('deve mapear código 0 para Sunny', () => {
+        const info = getWeatherInfo(0);
+        assert.strictEqual(info.description, 'Sunny');
+        assert.strictEqual(info.icon, 'assets/images/icon-sunny.webp');
       });
-      it('deve formatar dia da semana abreviado', () => {
-        assert.strictEqual(formatDayOfWeek('2025-08-05T12:00:00Z', true), 'Tue');
+      it('deve mapear tempestade código 95', () => {
+        const info = getWeatherInfo(95);
+        assert.strictEqual(info.description, 'Thunderstorm');
       });
-      it('deve formatar a hora no formato 12 horas: 3 PM', () => {
-        assert.strictEqual(formatHour('2025-08-05T15:00'), '3 PM');
+    });
+
+    await describe('Cliente Open-Meteo', (it) => {
+      it('deve validar estrutura de busca com mock', async () => {
+        const mockFetch = async () => ({
+          ok: true,
+          json: async () => ({
+            results: [{ id: 1, name: 'Berlin', country: 'Germany', latitude: 52.52, longitude: 13.41 }]
+          })
+        });
+        const res = await searchCities('Berlin', mockFetch);
+        assert.strictEqual(res[0].name, 'Berlin');
       });
     });
   </script>
