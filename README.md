@@ -1,116 +1,181 @@
-# Frontend Mentor - Weather app
+# Weather Now
 
-![Design preview for the Weather app coding challenge](./preview.jpg)
+Aplicacao web moderna para consulta meteorologica global com previsao em tempo real, previsao estendida para 7 dias e detalhamento horario com seletor de dias.
 
-## Welcome! 👋
+![Visao geral da aplicacao](./preview.jpg)
 
-Thanks for checking out this coding challenge.
+---
 
-[Frontend Mentor](https://www.frontendmentor.io) challenges help you improve your coding skills by building realistic projects.
+## Indice
 
-**To do this challenge, you need a good understanding of HTML, CSS, and JavaScript.**
+- [Sobre o Projeto](#sobre-o-projeto)
+- [Funcionalidades](#funcionalidades)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Como Executar o Projeto Localmente](#como-executar-o-projeto-localmente)
+- [Execucao da Suite de Testes](#execucao-da-suite-de-testes)
+- [Arquitetura do Codigo](#arquitetura-do-codigo)
+- [Design e Estados de Interface](#design-e-estados-de-interface)
+- [Autor](#autor)
 
-## The challenge
+---
 
-Build a weather app using the [Open-Meteo API](https://open-meteo.com/) and get it looking as close to the design as possible.
+## Sobre o Projeto
 
-You can use any tools you like to help you complete the challenge. So if you've got something you'd like to practice, feel free to give it a go.
+O Weather Now e uma solucao desenvolvida para o desafio de nivel intermediario do Frontend Mentor. A aplicacao consome dados meteorologicos e de geocodificacao da Open-Meteo API, oferecendo uma experiencia de navegacao fluida, totalmente responsiva e acessivel.
 
-Your users should be able to:
+O projeto foi construido com a premissa de utilizar exclusivamente a stack web pura (HTML5, CSS3 e JavaScript nativo), sem a utilizacao de frameworks, bundlers ou pacotes externos de terceiros.
 
-- Search for weather information by entering a location in the search bar
-- View current weather conditions including temperature, weather icon, and location details
-- See additional weather metrics like "feels like" temperature, humidity percentage, wind speed, and precipitation amounts
-- Browse a 7-day weather forecast with daily high/low temperatures and weather icons
-- View an hourly forecast showing temperature changes throughout the day
-- Switch between different days of the week using the day selector in the hourly forecast section
-- Toggle between Imperial and Metric measurement units via the units dropdown
-- View the optimal layout for the interface depending on their device's screen size
-- See hover and focus states for all interactive elements on the page
+---
 
-## Getting started
+## Funcionalidades
 
-### What's included
+- **Pesquisa Inteligente de Localidades**:
+  - Busca de cidades via API de geocodificacao da Open-Meteo.
+  - Otimizacao com debounce nativo para evitar consumo excessivo de requisicoes de rede.
+  - Dropdown com sugestoes de cidades e suporte a navegacao completa por teclado (setas para cima e para baixo, Enter para selecao e Escape para fechar).
+  - Feedback visual de busca em andamento e estado amigavel para buscas sem resultado.
 
-Your task is to build out the project to the designs inside the `/design` folder. You will find both a mobile and a desktop version of the design.
+- **Painel de Clima Atual**:
+  - Nome da cidade e pais com data formatada no padrao local.
+  - Temperatura atual e icone representativo das condicoes climaticas (ceu limpo, nublado, chuva, neve, tempestade, etc.).
+  - Metricas secundarias detalhadas: Sensacao termica (Feels Like), Umidade relativa do ar (Humidity), Velocidade do vento (Wind) e Precipitacao acumulada (Precipitation).
 
-**In your download:**
-- Mobile and desktop designs (JPG format)
-- All required assets in the `/assets` folder
-- Variable and static font files (or link to Google Fonts)
-- `style-guide.md` with colors, fonts, and other design specs
+- **Previsao de 7 Dias**:
+  - Exibicao dos proximos dias da semana com dia abreviado, icone climatico e temperaturas maxima e minima de cada dia.
 
-**Want more accurate builds?** The designs are in JPG static format, which means you'll need to use your best judgment for styles such as `font-size`, `padding`, and `margin`. If you'd like the Figma design file to help build a more accurate solution faster, you can [subscribe as a PRO member](https://www.frontendmentor.io/pro).
+- **Previsao Horaria com Seletor de Dia**:
+  - Detalhamento horario em formato de 12 horas (ex: 3 PM, 4 PM).
+  - Menu seletor interativo para navegar entre qualquer dia da semana disponivel na previsao.
 
-### API setup
+- **Alternancia de Unidades de Medida**:
+  - Alternancia rapida entre o padrao Metrico (Celsius, km/h, mm) e o padrao Imperial (Fahrenheit, mph, in).
+  - Permite configurar cada unidade de grandeza individualmente.
+  - Recalculo instantaneo na interface para todos os valores em tela sem necessidade de novas requisicoes HTTP.
+  - Persistencia automatica das preferencias escolhidas no armazenamento local do navegador (localStorage).
 
-This project uses the [Open-Meteo API](https://open-meteo.com/) to fetch weather data.
+- **Tratamento de Falhas e Resiliencia**:
+  - Tela de erro em caso de instabilidade na conexao ou resposta de erro do servidor, equipada com botao de retry para tentativa imediata.
 
-**Good news:** Open-Meteo is completely free and doesn't require an API key! You can start making requests right away.
+---
 
-- **API Documentation:** [https://open-meteo.com/en/docs](https://open-meteo.com/en/docs)
-- **No rate limits** for reasonable personal use
-- Example endpoint: `https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current_weather=true`
+## Tecnologias Utilizadas
 
-Check their documentation for all available weather parameters and location search capabilities.
+- **HTML5 Semantico**: Estruturacao com marcos de acessibilidade (header, main, section, aside, footer) e atributos ARIA para conformidade WCAG.
+- **CSS3 Puro**: Variaveis CSS (Custom Properties), CSS Grid, Flexbox, estilizacao responsiva para resolucoes mobile (375px) ate desktop (1440px+), alem de estados de foco visivel e animacoes nativas.
+- **JavaScript Vanilla (ES Modules)**: Organizacao modular nativa do navegador, sem etapas de compilacao ou transpilacao.
+- **Node.js Native Test Runner (`node:test` e `node:assert`)**: Suite de testes automatizados executada diretamente pelo runtime sem nenhuma biblioteca adicional.
 
-## Using AI coding assistants
+---
 
-We've included two files to help you if you're using AI coding assistants (like Claude, GitHub Copilot, Cursor, etc.) while working on this challenge:
+## Como Executar o Projeto Localmente
 
-- `AGENTS.md` - Contains detailed instructions for AI assistants on how to help you with this challenge. It's tailored to this challenge's difficulty level, so the AI will provide guidance appropriate to your learning stage—offering more support for beginner challenges and encouraging more independence on advanced ones.
-- `CLAUDE.md` - A pointer file that directs Claude-based tools to the AGENTS.md instructions.
+### Pre-requisitos
 
-**How to use them:** You don't need to do anything! These files are automatically detected by most AI coding tools. The AI will read them and adjust its behavior to be a better learning partner—guiding you toward solutions rather than just giving you the answers.
+E necessario ter o [Node.js](https://nodejs.org/) instalado na sua maquina (versao 18 ou superior).
 
-**Note:** These files are designed to help you *learn*, not to do the work for you. The AI is instructed to ask questions, give hints, and explain concepts rather than writing complete solutions.
+### Passo a Passo
 
-## Building your project
+1. Clone este repositorio em seu computador:
+```bash
+git clone https://github.com/menezesjuan/Weather-app.git
+cd Weather-app
+```
 
-Feel free to use any workflow that you feel comfortable with. Below is a suggested process, but do not feel like you need to follow these steps:
+2. Inicie o servidor estatico nativo incluido no projeto (nao requer instalacao de dependencias via npm):
+```bash
+node server.js
+```
 
-1. Initialize your project as a public repository on [GitHub](https://github.com/). Creating a repo will make it easier to share your code with the community if you need help. If you're not sure how to do this, [have a read-through of this Try Git resource](https://try.github.io/).
-2. Configure your repository to publish your code to a web address. This will also be useful if you need some help during a challenge as you can share the URL for your project with your repo URL. There are a number of ways to do this, and we provide some recommendations below.
-3. Look through the designs to start planning out how you'll tackle the project. This step is crucial to help you think ahead for CSS classes to create reusable styles.
-4. Before adding any styles, structure your content with HTML. Writing your HTML first can help focus your attention on creating well-structured content.
-5. Write out the base styles for your project, including general content styles, such as `font-family` and `font-size`.
-6. Start adding styles to the top of the page and work down. Only move on to the next section once you're happy you've completed the area you're working on.
+3. Abra o seu navegador de preferencia e acesse:
+```
+http://localhost:3000
+```
 
-### Want some support on the challenge?
+---
 
-[Join our community](https://www.frontendmentor.io/community) and ask questions in the **#help** channel.
+## Execucao da Suite de Testes
 
-## Deploying your project
+O projeto foi concebido seguindo o ciclo de Desenvolvimento Orientado a Testes (TDD). A suite completa abrange testes unitarios de conversoes matematicas, formatacao temporal, mapeamento WMO, cliente de API, gestao de estado e componentes de interface.
 
-As mentioned above, there are many ways to host your project for free. Our recommended hosts are:
+### Execucao via Terminal
 
-- [GitHub Pages](https://pages.github.com/)
-- [Vercel](https://vercel.com/)
-- [Netlify](https://www.netlify.com/)
+Para rodar todos os testes automatizados diretamente no terminal, execute:
+```bash
+node --test tests/*.test.js
+```
 
-You can host your site using one of these solutions or any of our other trusted providers. [Read more about our recommended and trusted hosts](https://www.frontendmentor.io/guides/hosting-your-solution).
+### Execucao Visual no Navegador
 
-## Submitting your solution
+Com o servidor local ativo (`node server.js`), voce tambem pode abrir o executor visual no navegador:
+```
+http://localhost:3000/tests/runner.html
+```
 
-Submit your solution on the platform for the rest of the community to see. Follow our ["Complete guide to submitting solutions"](https://www.frontendmentor.io/guides/how-to-submit-solutions) for tips on how to do this.
+---
 
-Remember, if you're looking for feedback on your solution, be sure to ask questions when submitting it. The more specific and detailed you are with your questions, the higher the chance you'll get valuable feedback from the community.
+## Arquitetura do Codigo
 
-**We strongly recommend overwriting this `README.md` with a custom one.** We've provided a template inside the [`README-template.md`](./README-template.md) file in this starter code. The template provides a guide for what to add. A custom `README` will help you explain your project and reflect on your learnings.
+```
+weather-app/
+├── assets/
+│   ├── fonts/               # Fontes DM Sans e Bricolage Grotesque
+│   └── images/              # Icones WebP, SVGs e ilustracoes
+├── design/                  # Especificacoes e telas do projeto
+├── js/
+│   ├── api.js               # Comunicacao HTTP com a API Open-Meteo
+│   ├── app.js               # Inicializacao e orquestracao dos eventos
+│   ├── conversions.js       # Funcoes de conversao de temperatura, vento e chuva
+│   ├── formatters.js        # Formatacao de datas, dias da semana e horas
+│   ├── state.js             # Store reativa com padrao Pub/Sub e persistencia
+│   ├── ui-feedback.js       # Controle das telas de loading, erro e vazio
+│   ├── ui-forecast.js       # Renderizacao dos 7 dias e lista horaria
+│   ├── ui-search.js         # Input com debounce e lista de cidades
+│   ├── ui-units.js          # Menu suspenso de configuracao de unidades
+│   └── weather-codes.js     # Mapeamento oficial dos codigos WMO para icones
+├── tests/
+│   ├── api.test.js          # Testes de integracao do cliente de API
+│   ├── conversions.test.js  # Testes de conversoes de grandezas
+│   ├── current-weather.test.js # Testes do card principal de clima
+│   ├── dom-structure.test.js   # Testes de semantica e tokens CSS
+│   ├── feedback-views.test.js  # Testes de alternancia de visualizacoes
+│   ├── forecast.test.js     # Testes da previsao de 7 dias e horaria
+│   ├── formatters.test.js   # Testes de formatacao de data/hora
+│   ├── runner.html          # Test runner visual executavel no navegador
+│   ├── sanity.test.js       # Teste de sanidade do ambiente
+│   ├── search.test.js       # Testes de busca e navegacao por teclado
+│   ├── state.test.js        # Testes da store reativa e local storage
+│   ├── units-dropdown.test.js  # Testes do menu e selecao de unidades
+│   └── weather-codes.test.js   # Testes de mapeamento dos codigos WMO
+├── index.html               # Marcacao HTML semantica principal
+├── style.css                # Estilizacao completa e responsiva
+├── server.js                # Servidor estatico nativo para desenvolvimento
+└── README.md                # Documentacao tecnica do projeto
+```
 
-## Sharing your solution
+---
 
-There are multiple places you can share your solution:
+## Design e Estados de Interface
 
-1. Submit it on the platform and share your solution page in the **#finished-projects** channel of our [community](https://www.frontendmentor.io/community)
-2. Share on [X (formerly Twitter)](https://x.com/frontendmentor) and mention **@frontendmentor**, including the repo and live URLs in your post. We'd love to take a look at what you've built and help share it around.
-3. Share your solution on [LinkedIn](https://www.linkedin.com/company/frontend-mentor/).
-4. Blog about your experience building your project. Writing about your workflow, technical choices, and talking through your code is a brilliant way to reinforce what you've learned. Great platforms to write on are [dev.to](https://dev.to/), [Hashnode](https://hashnode.com/), and [CodeNewbie](https://community.codenewbie.org/).
+### Visualizacao Desktop (Sistema Metrico)
+![Desktop Metrico](./design/desktop-design-metric.jpg)
 
-## Got feedback for us?
+### Visualizacao Mobile (Sistema Metrico)
+![Mobile Metrico](./design/mobile-design-metric.jpg)
 
-We love receiving feedback! We're always looking to improve our challenges and our platform. So if you have anything you'd like to mention, please email hi[at]frontendmentor[dot]io.
+### Menu de Unidades e Sugestoes de Busca
+![Menu de Unidades e Busca](./design/dropdown-state.jpg)
 
-**This challenge is completely free. Please share it with anyone who will find it useful for practice.**
+### Tratamento de Erro de Conexao com Botao de Retry
+![Estado de Erro de API](./design/api-error-state.jpg)
 
-**Have fun building!** 🚀
+### Estado de Busca Sem Resultados
+![Busca Sem Resultados](./design/no-results-state.jpg)
+
+---
+
+## Autor
+
+Desenvolvido por **Juan Menezes**.
+
+- GitHub: [https://github.com/menezesjuan](https://github.com/menezesjuan)
+- Desafio: [Frontend Mentor - Weather app coding challenge](https://www.frontendmentor.io/challenges/weather-app-K-yc0peOuL)
