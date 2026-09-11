@@ -79,6 +79,25 @@
   <div id="results"></div>
 
   <script type="module">
+    import {
+      celsiusToFahrenheit,
+      fahrenheitToCelsius,
+      kmhToMph,
+      mphToKmh,
+      mmToInches,
+      inchesToMm,
+      formatTemperature,
+      formatWindSpeed,
+      formatPrecipitation
+    } from '../js/conversions.js';
+
+    import {
+      formatDate,
+      formatDayOfWeek,
+      formatHour,
+      formatIsoDate
+    } from '../js/formatters.js';
+
     const resultsContainer = document.getElementById('results');
     let total = 0;
     let passed = 0;
@@ -90,7 +109,7 @@
       document.getElementById('fail-count').textContent = failed;
     }
 
-    window.describe = async function(suiteName, fn) {
+    async function describe(suiteName, fn) {
       const suiteEl = document.createElement('div');
       suiteEl.className = 'suite';
       const header = document.createElement('div');
@@ -117,19 +136,12 @@
 
       const it = (name, testFn) => runTest(name, testFn);
       await fn(it);
-    };
+    }
 
-    window.assert = {
+    const assert = {
       strictEqual(actual, expected, msg) {
         if (actual !== expected) {
           throw new Error(msg || `Esperado: ${JSON.stringify(expected)}, recebido: ${JSON.stringify(actual)}`);
-        }
-      },
-      deepStrictEqual(actual, expected, msg) {
-        const a = JSON.stringify(actual);
-        const b = JSON.stringify(expected);
-        if (a !== b) {
-          throw new Error(msg || `Esperado: ${b}, recebido: ${a}`);
         }
       },
       ok(value, msg) {
@@ -139,10 +151,40 @@
       }
     };
 
-    // Teste de integridade do runner
-    await describe('Ambiente no Navegador', (it) => {
-      it('deve carregar e executar testes no navegador', () => {
-        assert.ok(true);
+    // Suite Conversões
+    await describe('Conversões de Unidades de Temperatura', (it) => {
+      it('deve converter Celsius para Fahrenheit corretamente', () => {
+        assert.strictEqual(celsiusToFahrenheit(0), 32);
+        assert.strictEqual(celsiusToFahrenheit(20), 68);
+      });
+      it('deve formatar temperatura com o símbolo de grau', () => {
+        assert.strictEqual(formatTemperature(20.4), '20°');
+      });
+    });
+
+    await describe('Conversões de Unidades de Vento e Precipitação', (it) => {
+      it('deve converter km/h para mph com arredondamento preciso', () => {
+        assert.strictEqual(kmhToMph(14), 9);
+      });
+      it('deve converter mm para polegadas', () => {
+        assert.strictEqual(mmToInches(25.4), 1);
+      });
+      it('deve formatar vento e precipitação', () => {
+        assert.strictEqual(formatWindSpeed(14, 'kmh'), '14 km/h');
+        assert.strictEqual(formatPrecipitation(0, 'mm'), '0 mm');
+      });
+    });
+
+    // Suite Formatadores
+    await describe('Formatadores de Data e Hora', (it) => {
+      it('deve formatar data completa no padrão Tuesday, Aug 5, 2025', () => {
+        assert.strictEqual(formatDate('2025-08-05T12:00:00Z'), 'Tuesday, Aug 5, 2025');
+      });
+      it('deve formatar dia da semana abreviado', () => {
+        assert.strictEqual(formatDayOfWeek('2025-08-05T12:00:00Z', true), 'Tue');
+      });
+      it('deve formatar a hora no formato 12 horas: 3 PM', () => {
+        assert.strictEqual(formatHour('2025-08-05T15:00'), '3 PM');
       });
     });
   </script>
