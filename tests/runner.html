@@ -94,6 +94,7 @@
 
     import { getWeatherInfo } from '../js/weather-codes.js';
     import { searchCities, getWeatherData } from '../js/api.js';
+    import { createStore } from '../js/state.js';
 
     const resultsContainer = document.getElementById('results');
     let total = 0;
@@ -188,6 +189,24 @@
         });
         const res = await searchCities('Berlin', mockFetch);
         assert.strictEqual(res[0].name, 'Berlin');
+      });
+    });
+
+    await describe('Gerenciamento de Estado (Store)', (it) => {
+      it('deve alternar sistema de unidades para imperial e métrico', () => {
+        const store = createStore({ storage: null });
+        store.setSystem('imperial');
+        assert.strictEqual(store.getState().units.temperature, 'fahrenheit');
+        assert.strictEqual(store.getState().units.windSpeed, 'mph');
+        store.setSystem('metric');
+        assert.strictEqual(store.getState().units.temperature, 'celsius');
+      });
+      it('deve notificar listeners ao atualizar estado', () => {
+        const store = createStore({ storage: null });
+        let notified = false;
+        store.subscribe(() => { notified = true; });
+        store.setStatus('loading');
+        assert.strictEqual(notified, true);
       });
     });
   </script>
