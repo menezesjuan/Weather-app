@@ -5,6 +5,7 @@
 import { store } from './state.js';
 import { setupSearchController } from './ui-search.js';
 import { renderCurrentWeather } from './ui-weather.js';
+import { renderDailyForecast, renderHourlyForecast, setupHourlyDaySelector } from './ui-forecast.js';
 import { getWeatherData } from './api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -28,10 +29,26 @@ document.addEventListener('DOMContentLoaded', () => {
     precipitation: document.getElementById('metric-precipitation')
   };
 
+  // Elementos das Previsões
+  const dailyCardsContainer = document.getElementById('daily-cards-container');
+  const hourlyElements = {
+    listContainer: document.getElementById('hourly-list-container'),
+    dayButton: document.getElementById('hourly-day-button'),
+    dayLabel: document.getElementById('hourly-selected-day-label'),
+    dayMenu: document.getElementById('hourly-day-menu')
+  };
+
+  // Inicializar seletor de dias da previsão horária
+  setupHourlyDaySelector(hourlyElements.dayButton, hourlyElements.dayMenu);
+
   // Reagir a mudanças na store
   store.subscribe((state) => {
     if (state.weatherData) {
       renderCurrentWeather(weatherElements, state);
+      renderDailyForecast(dailyCardsContainer, state);
+      renderHourlyForecast(hourlyElements, state, (selectedDate) => {
+        store.setSelectedDay(selectedDate);
+      });
     }
   });
 
